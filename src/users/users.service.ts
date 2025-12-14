@@ -12,9 +12,9 @@ import {
   FindOneUserDto,
   UpdateUserDto,
   UserDto,
-} from '../common/dto/users.dto';
+} from '../common/dtos/users.dto';
 import { hashPassword } from 'src/common/utils/bcrypt';
-import { ResponseDto } from 'src/common/dto/response.dto';
+import { ResponseDto } from 'src/common/dtos/response.dto';
 
 @Injectable()
 export class UsersService {

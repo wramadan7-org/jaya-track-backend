@@ -3,7 +3,7 @@ import {
   ChangePasswordDto,
   ConfirmationEmailToChangePasswordDto,
   ForgotPasswordDto,
-} from '../common/dto/auth.dto';
+} from '../common/dtos/auth.dto';
 import { AuthService } from './auth.service';
 
 @Controller('auth')

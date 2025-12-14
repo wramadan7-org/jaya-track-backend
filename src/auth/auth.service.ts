@@ -6,15 +6,15 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { comparePassword, hashPassword } from 'src/common/utils/bcrypt';
-import { UserDto } from 'src/common/dto/users.dto';
+import { UserDto } from 'src/common/dtos/users.dto';
 import { Users } from 'src/users/users.entity';
 import { Repository } from 'typeorm';
 import {
   ChangePasswordDto,
   ConfirmationEmailToChangePasswordDto,
   ForgotPasswordDto,
-} from '../common/dto/auth.dto';
-import { ResponseDto } from 'src/common/dto/response.dto';
+} from '../common/dtos/auth.dto';
+import { ResponseDto } from 'src/common/dtos/response.dto';
 
 @Injectable()
 export class AuthService {

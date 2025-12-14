@@ -12,7 +12,7 @@ import {
   CreateUserDto,
   FindOneUserDto,
   UpdateUserDto,
-} from '../common/dto/users.dto';
+} from '../common/dtos/users.dto';
 
 @Controller('users')
 export class UsersController {
