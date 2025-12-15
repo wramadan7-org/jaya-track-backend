@@ -15,7 +15,7 @@ import {
 export class StockMovements {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column({ name: 'product_id', unique: true })
+  @Column({ name: 'product_id' })
   productId: string;
   @Column({
     type: 'enum',
@@ -44,7 +44,7 @@ export class StockMovements {
     enumName: 'reference_type',
   })
   referenceType: StockMovementsType;
-  @Column({ name: 'reference_id', unique: true })
+  @Column({ name: 'reference_id' })
   referenceId: string;
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
