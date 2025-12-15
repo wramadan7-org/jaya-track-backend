@@ -1,3 +1,4 @@
+import { Payments } from 'src/payments/payments.entity';
 import { Sales } from 'src/sales/sales.entity';
 import {
   Entity,
@@ -22,6 +23,8 @@ export class Shops {
   phone: string;
   @OneToMany(() => Sales, (sale) => sale)
   sales: Sales[];
+  @OneToMany(() => Payments, (payment) => payment.store)
+  payments: Payments[];
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
   @UpdateDateColumn({ name: 'updated_at' })
