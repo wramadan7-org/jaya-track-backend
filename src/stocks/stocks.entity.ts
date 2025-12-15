@@ -11,7 +11,7 @@ import { StockUnitType } from './stocks.enum';
 export class Stocks {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column({ name: 'product_id', unique: true })
+  @Column({ name: 'product_id' })
   productId: string;
   @Column()
   qty: number;
