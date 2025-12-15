@@ -2,10 +2,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { SalesStatus } from './sales.enum';
+import { Shops } from 'src/shops/shops.entity';
 
 @Entity()
 export class Sales {
@@ -24,6 +27,9 @@ export class Sales {
     enumName: 'status',
   })
   status: SalesStatus;
+  @ManyToOne(() => Shops, (shop) => shop.sales, { eager: true })
+  @JoinColumn({ name: 'store_id' })
+  store: Shops;
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
   @UpdateDateColumn({ name: 'updated_at' })
