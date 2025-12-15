@@ -27,7 +27,7 @@ export class Users {
   password: string;
   @ManyToOne(() => Roles, (role) => role.users, { eager: true })
   @JoinColumn({ name: 'role_id' })
-  role: string;
+  role: Roles;
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
   @UpdateDateColumn({ name: 'updated_at' })

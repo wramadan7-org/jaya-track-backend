@@ -1,7 +1,9 @@
+import { Stocks } from 'src/stocks/stocks.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -16,6 +18,8 @@ export class Products {
   fillPerSack: number;
   @Column({ type: 'int', name: 'base_price' })
   basePrice: number;
+  @OneToMany(() => Stocks, (stock) => stock.product)
+  stocks: Stocks[];
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
   @UpdateDateColumn({ name: 'updated_at' })
