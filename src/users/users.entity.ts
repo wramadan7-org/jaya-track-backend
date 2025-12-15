@@ -1,9 +1,12 @@
+import { Roles } from 'src/roles/roles.entity';
 import {
   Entity,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
   PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 
 @Entity()
@@ -22,6 +25,9 @@ export class Users {
   phone: string;
   @Column({ select: false })
   password: string;
+  @ManyToOne(() => Roles, (role) => role.users, { eager: true })
+  @JoinColumn({ name: 'role_id' })
+  role: string;
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
   @UpdateDateColumn({ name: 'updated_at' })
