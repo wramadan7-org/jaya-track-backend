@@ -11,6 +11,7 @@ import { StocksModule } from './stocks/stocks.module';
 import { StockMovementsModule } from './stock-movements/stock-movements.module';
 import { SalesModule } from './sales/sales.module';
 import { SalesItemsModule } from './sales-items/sales-items.module';
+import { PaymentsModule } from './payments/payments.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { SalesItemsModule } from './sales-items/sales-items.module';
     StockMovementsModule,
     SalesModule,
     SalesItemsModule,
+    PaymentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
