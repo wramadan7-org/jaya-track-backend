@@ -13,6 +13,7 @@ import {
   StockMovementsType,
 } from './stock-movements.enum';
 import { Products } from 'src/products/products.entity';
+import { Sales } from 'src/sales/sales.entity';
 
 @Entity({ name: 'stock_movements' })
 export class StockMovements {
@@ -54,6 +55,11 @@ export class StockMovements {
   })
   @JoinColumn({ name: 'product_id' })
   product: Products;
+  @ManyToOne(() => Sales, (sales) => sales.stock_movements, {
+    onDelete: 'SET NULL', // bebas diganti CASCADE jika perlu
+  })
+  @JoinColumn({ name: 'reference_id' })
+  sales: Sales;
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
   @UpdateDateColumn({ name: 'updated_at' })

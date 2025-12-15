@@ -4,11 +4,13 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { SalesStatus } from './sales.enum';
 import { Shops } from 'src/shops/shops.entity';
+import { StockMovements } from 'src/stock-movements/stock-movements.entity';
 
 @Entity()
 export class Sales {
@@ -30,6 +32,8 @@ export class Sales {
   @ManyToOne(() => Shops, (shop) => shop.sales, { eager: true })
   @JoinColumn({ name: 'store_id' })
   store: Shops;
+  @OneToMany(() => StockMovements, (sm) => sm.sales)
+  stock_movements: StockMovements[];
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
   @UpdateDateColumn({ name: 'updated_at' })
