@@ -1,4 +1,5 @@
 import { Payments } from 'src/payments/payments.entity';
+import { Sales } from 'src/sales/sales.entity';
 import {
   Column,
   CreateDateColumn,
@@ -24,6 +25,11 @@ export class PaymentDetails {
   })
   @JoinColumn({ name: 'payment_id' })
   payment: Payments;
+  @ManyToOne(() => Sales, (sales) => sales.paymentDetails, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'sales_id' })
+  sales: Sales;
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
   @UpdateDateColumn({ name: 'updated_at' })
