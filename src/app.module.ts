@@ -13,6 +13,7 @@ import { SalesModule } from './sales/sales.module';
 import { SalesItemsModule } from './sales-items/sales-items.module';
 import { PaymentsModule } from './payments/payments.module';
 import { PaymentDetailsModule } from './payment-details/payment-details.module';
+import { RolesModule } from './roles/roles.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { PaymentDetailsModule } from './payment-details/payment-details.module';
     SalesItemsModule,
     PaymentsModule,
     PaymentDetailsModule,
+    RolesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
