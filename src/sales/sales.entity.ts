@@ -11,6 +11,7 @@ import {
 import { SalesStatus } from './sales.enum';
 import { Shops } from 'src/shops/shops.entity';
 import { StockMovements } from 'src/stock-movements/stock-movements.entity';
+import { SalesItems } from 'src/sales-items/sales-items.entity';
 
 @Entity()
 export class Sales {
@@ -34,6 +35,8 @@ export class Sales {
   store: Shops;
   @OneToMany(() => StockMovements, (sm) => sm.sales)
   stock_movements: StockMovements[];
+  @OneToMany(() => SalesItems, (item) => item.sales)
+  items: SalesItems[];
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
   @UpdateDateColumn({ name: 'updated_at' })

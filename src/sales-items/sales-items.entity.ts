@@ -1,4 +1,5 @@
 import { Products } from 'src/products/products.entity';
+import { Sales } from 'src/sales/sales.entity';
 import { StockUnitType } from 'src/stocks/stocks.enum';
 import {
   Column,
@@ -36,6 +37,11 @@ export class SalesItems {
   })
   @JoinColumn({ name: 'product_id' })
   product: Products;
+  @ManyToOne(() => Sales, (sales) => sales.items, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'sales_id' })
+  sales: Sales;
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
   @UpdateDateColumn({ name: 'updated_at' })
