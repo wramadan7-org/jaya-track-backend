@@ -3,6 +3,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -10,6 +12,7 @@ import {
   StockMovementReferenceType,
   StockMovementsType,
 } from './stock-movements.enum';
+import { Products } from 'src/products/products.entity';
 
 @Entity({ name: 'stock_movements' })
 export class StockMovements {
@@ -46,6 +49,11 @@ export class StockMovements {
   referenceType: StockMovementsType;
   @Column({ name: 'reference_id' })
   referenceId: string;
+  @ManyToOne(() => Products, (product) => product.stockMovements, {
+    eager: true,
+  })
+  @JoinColumn({ name: 'product_id' })
+  product: Products;
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
   @UpdateDateColumn({ name: 'updated_at' })
