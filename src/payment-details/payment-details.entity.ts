@@ -1,7 +1,10 @@
+import { Payments } from 'src/payments/payments.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -16,6 +19,11 @@ export class PaymentDetails {
   salesId: string;
   @Column({ type: 'int' })
   amount: number;
+  @ManyToOne(() => Payments, (payment) => payment.details, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'payment_id' })
+  payment: Payments;
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
   @UpdateDateColumn({ name: 'updated_at' })

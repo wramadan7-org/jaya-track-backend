@@ -4,11 +4,13 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { PaymentMethod } from './payments.enum';
 import { Shops } from 'src/shops/shops.entity';
+import { PaymentDetails } from 'src/payment-details/payment-details.entity';
 
 @Entity()
 export class Payments {
@@ -31,6 +33,8 @@ export class Payments {
   })
   @JoinColumn({ name: 'store_id' })
   store: Shops;
+  @OneToMany(() => PaymentDetails, (detail) => detail.payment)
+  details: PaymentDetails[];
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
   @UpdateDateColumn({ name: 'updated_at' })
