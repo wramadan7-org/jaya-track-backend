@@ -1,8 +1,11 @@
+import { Products } from 'src/products/products.entity';
 import { StockUnitType } from 'src/stocks/stocks.enum';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -28,6 +31,11 @@ export class SalesItems {
   price: number;
   @Column({ type: 'int' })
   subtotal: number;
+  @ManyToOne(() => Products, (product) => product.sales_items, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'product_id' })
+  product: Products;
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
   @UpdateDateColumn({ name: 'updated_at' })
