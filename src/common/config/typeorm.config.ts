@@ -8,8 +8,8 @@ const option = {
   username: 'postgres',
   password: 'nindamey11',
   database: 'jayatrack',
-  entities: [__dirname + '/**/*.entity{.ts,.js}'],
-  migrations: [__dirname + '/database/migrations/*{.ts,.js}'],
+  entities: ['src/**/*.entity.ts'],
+  migrations: ['src/database/migrations/*.ts'],
   seeds: ['src/database/seeders/*.ts'],
 } as DataSourceOptions & SeederOptions;
 

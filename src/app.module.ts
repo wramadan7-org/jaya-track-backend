@@ -5,6 +5,7 @@ import { InventoryModule } from './inventory/inventory.module';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
+import { ShopsModule } from './shops/shops.module';
 
 @Module({
   imports: [
@@ -17,11 +18,12 @@ import { AuthModule } from './auth/auth.module';
       database: 'jayatrack',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       autoLoadEntities: true,
-      synchronize: true, // set false if going to production
+      synchronize: false, // set false if going to production
     }),
     InventoryModule,
     UsersModule,
     AuthModule,
+    ShopsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
