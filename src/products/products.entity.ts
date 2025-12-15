@@ -12,10 +12,10 @@ export class Products {
   id: string;
   @Column()
   name: string;
-  @Column({ name: 'fill_per_sack' })
-  fillPerSack: string;
-  @Column({ name: 'base_price' })
-  basePrice: string;
+  @Column({ type: 'int', name: 'fill_per_sack' })
+  fillPerSack: number;
+  @Column({ type: 'int', name: 'base_price' })
+  basePrice: number;
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
   @UpdateDateColumn({ name: 'updated_at' })
