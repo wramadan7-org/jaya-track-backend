@@ -14,7 +14,7 @@ import {
 export class Products {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column()
+  @Column({ unique: true })
   name: string;
   @Column({ type: 'int', name: 'fill_per_sack' })
   fillPerSack: number;
@@ -25,7 +25,7 @@ export class Products {
   @OneToMany(() => StockMovements, (movement) => movement.product)
   stockMovements: StockMovements[];
   @OneToMany(() => SalesItems, (si) => si.product)
-  sales_items: SalesItems[];
+  salesItems: SalesItems[];
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
   @UpdateDateColumn({ name: 'updated_at' })

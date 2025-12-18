@@ -32,7 +32,7 @@ export class SalesItems {
   price: number;
   @Column({ type: 'int' })
   subtotal: number;
-  @ManyToOne(() => Products, (product) => product.sales_items, {
+  @ManyToOne(() => Products, (product) => product.salesItems, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'product_id' })
