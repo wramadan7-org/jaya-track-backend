@@ -14,7 +14,7 @@ import { Products } from 'src/products/products.entity';
 export class Stocks {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column({ name: 'product_id' })
+  @Column({ name: 'product_id', unique: true })
   productId: string;
   @Column()
   qty: number;
