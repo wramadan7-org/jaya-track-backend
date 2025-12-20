@@ -13,7 +13,6 @@ import {
   StockMovementsType,
 } from './stock-movements.enum';
 import { Products } from 'src/products/products.entity';
-import { Sales } from 'src/sales/sales.entity';
 
 @Entity({ name: 'stock_movements' })
 export class StockMovements {
@@ -47,19 +46,14 @@ export class StockMovements {
     default: StockMovementReferenceType.STOCK_ADJUSTMENT,
     enumName: 'reference_type',
   })
-  referenceType: StockMovementsType;
-  @Column({ name: 'reference_id' })
-  referenceId: string;
+  referenceType: StockMovementReferenceType;
+  @Column({ name: 'reference_id', type: 'uuid', nullable: true })
+  referenceId: string | null;
   @ManyToOne(() => Products, (product) => product.stockMovements, {
     eager: true,
   })
   @JoinColumn({ name: 'product_id' })
   product: Products;
-  @ManyToOne(() => Sales, (sales) => sales.stock_movements, {
-    onDelete: 'SET NULL', // bebas diganti CASCADE jika perlu
-  })
-  @JoinColumn({ name: 'reference_id' })
-  sales: Sales;
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
   @UpdateDateColumn({ name: 'updated_at' })

@@ -10,7 +10,6 @@ import {
 } from 'typeorm';
 import { SalesStatus } from './sales.enum';
 import { Shops } from 'src/shops/shops.entity';
-import { StockMovements } from 'src/stock-movements/stock-movements.entity';
 import { SalesItems } from 'src/sales-items/sales-items.entity';
 import { PaymentDetails } from 'src/payment-details/payment-details.entity';
 
@@ -34,8 +33,6 @@ export class Sales {
   @ManyToOne(() => Shops, (shop) => shop.sales, { eager: true })
   @JoinColumn({ name: 'store_id' })
   store: Shops;
-  @OneToMany(() => StockMovements, (sm) => sm.sales)
-  stock_movements: StockMovements[];
   @OneToMany(() => SalesItems, (item) => item.sales)
   items: SalesItems[];
   @OneToMany(() => PaymentDetails, (detail) => detail.sales)
