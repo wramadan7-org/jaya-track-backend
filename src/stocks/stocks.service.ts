@@ -5,12 +5,13 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Stocks } from './stocks.entity';
-import { QueryFailedError, Repository } from 'typeorm';
+import { EntityManager, QueryFailedError, Repository } from 'typeorm';
 import {
   CreateStockDto,
   FindOneStockDto,
   StockDto,
   UpdateStockDto,
+  validateAndDecreaseStockDto,
 } from 'src/common/dtos/stocks.dto';
 import { ResponseDto } from 'src/common/dtos/response.dto';
 
@@ -67,7 +68,7 @@ export class StocksService {
     }
 
     if (filter.unitType) {
-      qb.andWhere('UPPER(stocks.unitTyoe) = UPPER(:unitType)', {
+      qb.andWhere('stocks.unitType = :unitType', {
         unitType: filter.unitType,
       });
     }
@@ -109,7 +110,7 @@ export class StocksService {
     }
 
     if (params.unitType) {
-      qb.andWhere('UPPER(stocks.unitTyoe) = UPPER(:unitType)', {
+      qb.andWhere('stocks.unitType = :unitType', {
         unitType: params.unitType,
       });
     }
@@ -166,5 +167,34 @@ export class StocksService {
     if (!removedStock) throw new ConflictException('Failed to remove stock');
 
     return { data: removedStock, message: 'Stock removed successfully' };
+  }
+
+  async validateAndDecreaseStockManager(
+    manager: EntityManager,
+    productId: string,
+    qtyToReduce: number,
+  ): Promise<validateAndDecreaseStockDto> {
+    const stock = await manager
+      .getRepository(Stocks)
+      .createQueryBuilder('stock')
+      .where('stock.productId = :productId', { productId })
+      .setLock('pessimistic_write')
+      .getOne();
+
+    if (!stock) {
+      throw new NotFoundException(`Stock for product ${productId} not found`);
+    }
+
+    if (stock.qty < qtyToReduce) {
+      throw new ConflictException(`Stock not enough for product ${productId}`);
+    }
+
+    const qtyBefore = stock.qty;
+    const qtyAfter = qtyBefore - qtyToReduce;
+
+    stock.qty = qtyAfter;
+    await manager.save(stock);
+
+    return { qtyBefore, qtyAfter, unitType: stock.unitType };
   }
 }

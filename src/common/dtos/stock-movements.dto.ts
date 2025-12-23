@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import {
   IsEnum,
   IsNumber,
@@ -33,6 +34,7 @@ export class StockMovementDto {
 export class CreateStockMovementDto {
   @IsUUID(4)
   productId: string;
+  @Transform(({ value }: { value: StockUnitType }) => value?.toUpperCase())
   @IsEnum(StockUnitType, { message: 'unitType must be either DOZENS or SACK' })
   unitType: StockUnitType;
   @IsNumber()
@@ -41,10 +43,14 @@ export class CreateStockMovementDto {
   qtyChange: number;
   @IsNumber()
   qtyAfter: number;
+  @Transform(({ value }: { value: StockMovementsType }) => value?.toUpperCase())
   @IsEnum(StockMovementsType, {
     message: 'type must be either IN/OUT/RETURN/ADJUSTMENT',
   })
   type: StockMovementsType;
+  @Transform(({ value }: { value: StockMovementReferenceType }) =>
+    value?.toUpperCase(),
+  )
   @IsEnum(StockMovementReferenceType, {
     message:
       'referenceType must be either INVOICE/PURCHASE_ORDER/STOCK_ADJUSTMENT',
@@ -66,14 +72,19 @@ export class FindOneStockMovementDto {
   @IsString()
   productName: string;
   @IsOptional()
+  @Transform(({ value }: { value: StockUnitType }) => value?.toUpperCase())
   @IsEnum(StockUnitType, { message: 'unitType must be either DOZENS or SACK' })
   unitType: StockUnitType;
   @IsOptional()
+  @Transform(({ value }: { value: StockMovementsType }) => value?.toUpperCase())
   @IsEnum(StockMovementsType, {
     message: 'type must be either IN/OUT/RETURN/ADJUSTMENT',
   })
   type: StockMovementsType;
   @IsOptional()
+  @Transform(({ value }: { value: StockMovementReferenceType }) =>
+    value?.toUpperCase(),
+  )
   @IsEnum(StockMovementReferenceType, {
     message:
       'referenceType must be either INVOICE/PURCHASE_ORDER/STOCK_ADJUSTMENT',
@@ -83,6 +94,7 @@ export class FindOneStockMovementDto {
   @IsUUID(4)
   referenceId: string;
   @IsOptional()
+  @Transform(({ value }: { value: SalesStatus }) => value?.toUpperCase())
   @IsEnum(SalesStatus, { message: 'status must be either PAID/PARTIAL/UNPAID' })
   salesStatus: SalesStatus;
 }
@@ -92,6 +104,7 @@ export class UpdateStockMovementDto {
   @IsUUID(4)
   productId: string;
   @IsOptional()
+  @Transform(({ value }: { value: StockUnitType }) => value?.toUpperCase())
   @IsEnum(StockUnitType, { message: 'unitType must be either DOZENS or SACK' })
   unitType: StockUnitType;
   @IsOptional()
@@ -104,11 +117,15 @@ export class UpdateStockMovementDto {
   @IsNumber()
   qtyAfter: number;
   @IsOptional()
+  @Transform(({ value }: { value: StockMovementsType }) => value?.toUpperCase())
   @IsEnum(StockMovementsType, {
     message: 'type must be either IN/OUT/RETURN/ADJUSTMENT',
   })
   type: StockMovementsType;
   @IsOptional()
+  @Transform(({ value }: { value: StockMovementReferenceType }) =>
+    value?.toUpperCase(),
+  )
   @IsEnum(StockMovementReferenceType, {
     message:
       'referenceType must be either INVOICE/PURCHASE_ORDER/STOCK_ADJUSTMENT',

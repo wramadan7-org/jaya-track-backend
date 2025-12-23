@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import {
   IsEnum,
   IsNumber,
@@ -9,6 +10,7 @@ import { PaymentDetails } from 'src/payment-details/payment-details.entity';
 import { SalesItems } from 'src/sales-items/sales-items.entity';
 import { SalesStatus } from 'src/sales/sales.enum';
 import { Shops } from 'src/shops/shops.entity';
+import { CreateSaleItemDto } from './sales-items.dto';
 
 export class SaleDto {
   id: string;
@@ -28,10 +30,11 @@ export class CreateSaleDto {
   storeId: string;
   @IsNumber()
   invoiceNumber: number;
-  @IsNumber()
-  grandTotal: number;
+  @Transform(({ value }: { value: SalesStatus }) => value?.toUpperCase())
   @IsEnum(SalesStatus, { message: 'status must be either PAID/PARTIAL/UNPAID' })
   status: SalesStatus;
+  @IsOptional()
+  items?: CreateSaleItemDto[];
 }
 
 export class FindOneSaleDto {
@@ -45,6 +48,7 @@ export class FindOneSaleDto {
   @IsNumber()
   invoiceNumber: number;
   @IsOptional()
+  @Transform(({ value }: { value: SalesStatus }) => value?.toUpperCase())
   @IsEnum(SalesStatus, { message: 'status must be either PAID/PARTIAL/UNPAID' })
   status: SalesStatus;
   @IsOptional()
@@ -66,6 +70,7 @@ export class UpdateSaleDto {
   @IsNumber()
   grandTotal: number;
   @IsOptional()
+  @Transform(({ value }: { value: SalesStatus }) => value?.toUpperCase())
   @IsEnum(SalesStatus, { message: 'status must be either PAID/PARTIAL/UNPAID' })
   status: SalesStatus;
 }

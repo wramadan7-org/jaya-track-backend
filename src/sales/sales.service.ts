@@ -13,23 +13,98 @@ import {
   UpdateSaleDto,
 } from 'src/common/dtos/sales.dto';
 import { ResponseDto } from 'src/common/dtos/response.dto';
+import { SalesItems } from 'src/sales-items/sales-items.entity';
+import { ProductsService } from 'src/products/products.service';
+import { SalesItemsService } from 'src/sales-items/sales-items.service';
+import { Products } from 'src/products/products.entity';
+import { StocksService } from 'src/stocks/stocks.service';
+import { StockMovementsService } from 'src/stock-movements/stock-movements.service';
 
 @Injectable()
 export class SalesService {
   constructor(
     @InjectRepository(Sales)
     private salesRepository: Repository<Sales>,
+    private productsService: ProductsService,
+    private salesItemsService: SalesItemsService,
+    private stocksService: StocksService,
+    private stockMovementsService: StockMovementsService,
   ) {}
 
   async create(body: CreateSaleDto): Promise<ResponseDto<SaleDto>> {
-    const sale = this.salesRepository.create(body);
+    const queryRunner =
+      this.salesRepository.manager.connection.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
     try {
-      const savedSale = await this.salesRepository.save(sale);
+      let grandTotal = 0;
+
+      const salesRepo = queryRunner.manager.getRepository(Sales);
+      const sale = salesRepo.create(body);
+      const savedSale = await salesRepo.save(sale);
+
+      if (body.items?.length) {
+        const productIds = body.items.map((item) => item.productId);
+
+        const products: Products[] =
+          await this.productsService.findByIdsManager(
+            queryRunner.manager,
+            productIds,
+          );
+
+        if (products.length !== productIds.length) {
+          throw new NotFoundException('One or more products not found');
+        }
+
+        const salesItems: SalesItems[] =
+          this.salesItemsService.createManyManager(
+            queryRunner.manager,
+            savedSale.id,
+            body.items,
+            products,
+          );
+
+        for (const item of salesItems) {
+          const { qtyBefore, qtyAfter, unitType } =
+            await this.stocksService.validateAndDecreaseStockManager(
+              queryRunner.manager,
+              item.productId,
+              item.qty,
+            );
+
+          await this.stockMovementsService.createOutMovementManager(
+            queryRunner.manager,
+            {
+              productId: item.productId,
+              unitType,
+              qtyBefore,
+              qtyChange: item.qty,
+              qtyAfter,
+              referenceId: savedSale.id,
+            },
+          );
+
+          grandTotal += item.subtotal;
+        }
+
+        await queryRunner.manager.save(SalesItems, salesItems);
+      }
+
+      await queryRunner.manager.update(
+        Sales,
+        { id: savedSale.id },
+        { grandTotal },
+      );
+
+      await queryRunner.commitTransaction();
 
       return { data: savedSale, message: 'Sale created successfully' };
     } catch (error: unknown) {
+      await queryRunner.rollbackTransaction();
       console.error(error);
+
       if (
         error instanceof QueryFailedError &&
         typeof error === 'object' &&
@@ -39,7 +114,10 @@ export class SalesService {
       ) {
         throw new ConflictException('Sale already exists');
       }
+
       throw error;
+    } finally {
+      await queryRunner.release();
     }
   }
 
@@ -63,7 +141,7 @@ export class SalesService {
     }
 
     if (filter.status) {
-      qb.andWhere('UPPER(sales.status) LIKE UPPER(:status)', {
+      qb.andWhere('sales.status = :status', {
         status: filter.status,
       });
     }
@@ -113,7 +191,7 @@ export class SalesService {
     }
 
     if (params.status) {
-      qb.andWhere('UPPER(sales.status) LIKE UPPER(:status)', {
+      qb.andWhere('sales.status = :status', {
         status: params.status,
       });
     }

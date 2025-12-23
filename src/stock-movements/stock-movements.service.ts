@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { StockMovements } from './stock-movements.entity';
-import { QueryFailedError, Repository } from 'typeorm';
+import { EntityManager, QueryFailedError, Repository } from 'typeorm';
 import {
   CreateStockMovementDto,
   FindOneStockMovementDto,
@@ -13,6 +13,20 @@ import {
   UpdateStockMovementDto,
 } from 'src/common/dtos/stock-movements.dto';
 import { ResponseDto } from 'src/common/dtos/response.dto';
+import { StockUnitType } from 'src/stocks/stocks.enum';
+import {
+  StockMovementReferenceType,
+  StockMovementsType,
+} from './stock-movements.enum';
+
+export type CreateOutMovementPayloadType = {
+  productId: string;
+  unitType: StockUnitType;
+  qtyBefore: number;
+  qtyChange: number;
+  qtyAfter: number;
+  referenceId: string;
+};
 
 @Injectable()
 export class StockMovementsService {
@@ -63,24 +77,21 @@ export class StockMovementsService {
     }
 
     if (filter.unitType) {
-      qb.andWhere('UPPER(stock_movements.unitTyoe) = UPPER(:unitType)', {
+      qb.andWhere('stock_movements.unitType = :unitType', {
         unitType: filter.unitType,
       });
     }
 
     if (filter.type) {
-      qb.andWhere('UPPER(stock_movements.type) = UPPER(:type)', {
+      qb.andWhere('stock_movements.type = :type', {
         type: filter.type,
       });
     }
 
     if (filter.referenceType) {
-      qb.andWhere(
-        'UPPER(stock_movements.reference_type) = UPPER(:referenceType)',
-        {
-          referenceType: filter.referenceType,
-        },
-      );
+      qb.andWhere('stock_movements.reference_type = :referenceType', {
+        referenceType: filter.referenceType,
+      });
     }
 
     if (filter.referenceId) {
@@ -123,24 +134,21 @@ export class StockMovementsService {
     }
 
     if (params.unitType) {
-      qb.andWhere('UPPER(stock_movements.unitTyoe) = UPPER(:unitType)', {
+      qb.andWhere('stock_movements.unitType = :unitType', {
         unitType: params.unitType,
       });
     }
 
     if (params.type) {
-      qb.andWhere('UPPER(stock_movements.type) = UPPER(:type)', {
+      qb.andWhere('stock_movements.type = :type', {
         type: params.type,
       });
     }
 
     if (params.referenceType) {
-      qb.andWhere(
-        'UPPER(stock_movements.reference_type) = UPPER(:referenceType)',
-        {
-          referenceType: params.referenceType,
-        },
-      );
+      qb.andWhere('stock_movements.reference_type = :referenceType', {
+        referenceType: params.referenceType,
+      });
     }
 
     if (params.referenceId) {
@@ -223,5 +231,23 @@ export class StockMovementsService {
       data: removedStock,
       message: 'Stock movement removed successfully',
     };
+  }
+
+  async createOutMovementManager(
+    manager: EntityManager,
+    payload: CreateOutMovementPayloadType,
+  ): Promise<StockMovements> {
+    const movement = manager.create(StockMovements, {
+      productId: payload.productId,
+      unitType: payload.unitType,
+      qtyBefore: payload.qtyBefore,
+      qtyChange: payload.qtyChange,
+      qtyAfter: payload.qtyAfter,
+      type: StockMovementsType.OUT,
+      referenceType: StockMovementReferenceType.INVOICE,
+      referenceId: payload.referenceId,
+    });
+
+    return manager.save(movement);
   }
 }

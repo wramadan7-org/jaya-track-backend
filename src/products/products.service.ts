@@ -5,7 +5,14 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Products } from './products.entity';
-import { FindOptionsWhere, ILike, QueryFailedError, Repository } from 'typeorm';
+import {
+  EntityManager,
+  FindOptionsWhere,
+  ILike,
+  In,
+  QueryFailedError,
+  Repository,
+} from 'typeorm';
 import {
   CreateProductDto,
   FindOneProductDto,
@@ -61,6 +68,13 @@ export class ProductsService {
     const products = await this.productRepository.find({ where });
 
     return { data: products, message: 'Products retrieved successfully' };
+  }
+
+  async findByIdsManager(
+    manager: EntityManager,
+    ids: string[],
+  ): Promise<Products[]> {
+    return await manager.find(Products, { where: { id: In(ids) } });
   }
 
   async findOne(

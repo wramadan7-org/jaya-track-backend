@@ -26,6 +26,8 @@ export class SalesItems {
     enumName: 'unit_type',
   })
   unitType: StockUnitType;
+  @Column({ type: 'int', name: 'fill_per_sack' })
+  fillPerSack: number;
   @Column({ type: 'int' })
   qty: number;
   @Column({ type: 'int' })

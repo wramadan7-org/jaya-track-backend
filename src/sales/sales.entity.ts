@@ -21,7 +21,7 @@ export class Sales {
   storeId: string;
   @Column({ name: 'invoice_number', type: 'int' })
   invoiceNumber: number;
-  @Column({ name: 'grand_total', type: 'int' })
+  @Column({ name: 'grand_total', type: 'int', default: 0 })
   grandTotal: number;
   @Column({
     type: 'enum',

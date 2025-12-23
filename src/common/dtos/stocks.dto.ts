@@ -7,6 +7,7 @@ import {
 } from 'class-validator';
 import { StockUnitType } from 'src/stocks/stocks.enum';
 import { ProductDto } from './products.dto';
+import { Transform } from 'class-transformer';
 
 export class StockDto {
   id: string;
@@ -21,6 +22,7 @@ export class CreateStockDto {
   productId: string;
   @IsNumber()
   qty: number;
+  @Transform(({ value }: { value: StockUnitType }) => value?.toUpperCase())
   @IsEnum(StockUnitType, { message: 'unitType must be either DOZENS or SACK' })
   unitType: StockUnitType;
 }
@@ -39,6 +41,7 @@ export class FindOneStockDto {
   @IsNumber()
   qty: number;
   @IsOptional()
+  @Transform(({ value }: { value: StockUnitType }) => value?.toUpperCase())
   @IsEnum(StockUnitType, { message: 'unitType must be either DOZENS or SACK' })
   unitType: string;
 }
@@ -51,6 +54,16 @@ export class UpdateStockDto {
   @IsNumber()
   qty: number;
   @IsOptional()
+  @Transform(({ value }: { value: StockUnitType }) => value?.toUpperCase())
+  @IsEnum(StockUnitType, { message: 'unitType must be either DOZENS or SACK' })
+  unitType: StockUnitType;
+}
+
+export class validateAndDecreaseStockDto {
+  @IsNumber()
+  qtyBefore: number;
+  @IsNumber()
+  qtyAfter: number;
   @IsEnum(StockUnitType, { message: 'unitType must be either DOZENS or SACK' })
   unitType: StockUnitType;
 }
