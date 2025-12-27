@@ -26,7 +26,7 @@ export class Payments {
     default: PaymentMethod.CASH,
   })
   method: PaymentMethod;
-  @Column()
+  @Column({ nullable: true })
   note: string;
   @ManyToOne(() => Shops, (shop) => shop.payments, {
     onDelete: 'CASCADE',

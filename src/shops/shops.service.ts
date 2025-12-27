@@ -4,7 +4,13 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, ILike, QueryFailedError, Repository } from 'typeorm';
+import {
+  EntityManager,
+  FindOptionsWhere,
+  ILike,
+  QueryFailedError,
+  Repository,
+} from 'typeorm';
 import { Shops } from './shops.entity';
 import {
   CreateShopDto,
@@ -110,5 +116,13 @@ export class ShopsService {
       console.error(error);
       throw new ConflictException('Shop deleted failed');
     }
+  }
+
+  async findOneManager(manager: EntityManager, id: string): Promise<Shops> {
+    const shop = await manager.findOne(Shops, { where: { id } });
+
+    if (!shop) throw new NotFoundException('Shop not found');
+
+    return shop;
   }
 }

@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { QueryFailedError, Repository } from 'typeorm';
+import { EntityManager, QueryFailedError, Repository } from 'typeorm';
 import { Sales } from './sales.entity';
 import {
   CreateSaleDto,
@@ -19,6 +19,7 @@ import { SalesItemsService } from 'src/sales-items/sales-items.service';
 import { Products } from 'src/products/products.entity';
 import { StocksService } from 'src/stocks/stocks.service';
 import { StockMovementsService } from 'src/stock-movements/stock-movements.service';
+import { SalesStatus } from './sales.enum';
 
 @Injectable()
 export class SalesService {
@@ -257,5 +258,36 @@ export class SalesService {
     if (!removedSale) throw new ConflictException('Sale removed failed');
 
     return { data: removedSale, message: 'Sale removed successfully' };
+  }
+
+  async findOneManager(manager: EntityManager, id: string): Promise<Sales> {
+    const sale = await manager.findOne(Sales, {
+      where: { id },
+    });
+
+    if (!sale) throw new NotFoundException('Sale not found');
+
+    return sale;
+  }
+
+  async validateSaleForUpdateStatusAndPaidAmountManager(
+    manager: EntityManager,
+    id: string,
+    amountPaid: number,
+  ): Promise<Sales> {
+    const sale = await this.findOneManager(manager, id);
+
+    sale.paidAmount += amountPaid;
+
+    if (sale.paidAmount > sale.grandTotal)
+      throw new ConflictException(
+        'Amount paid cannot be greater than grand total',
+      );
+    else if (sale.paidAmount === 0) sale.status = SalesStatus.UNPAID;
+    else if (sale.paidAmount < sale.grandTotal)
+      sale.status = SalesStatus.PARTIAL;
+    else if (sale.paidAmount == sale.grandTotal) sale.status = SalesStatus.PAID;
+
+    return await manager.save(Sales, sale);
   }
 }

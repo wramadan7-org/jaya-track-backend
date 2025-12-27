@@ -1,14 +1,17 @@
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
+  IsArray,
   IsEnum,
   IsNumber,
   IsOptional,
   IsString,
   IsUUID,
+  ValidateNested,
 } from 'class-validator';
 import { PaymentDetails } from 'src/payment-details/payment-details.entity';
 import { PaymentMethod } from 'src/payments/payments.enum';
 import { Shops } from 'src/shops/shops.entity';
+import { CreatePaymentDetailDto } from './payment-details.dto';
 
 export class PaymentDto {
   id: string;
@@ -33,6 +36,10 @@ export class CreatePaymentDto {
   @IsOptional()
   @IsString()
   note?: string;
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreatePaymentDetailDto)
+  paymentDetails?: CreatePaymentDetailDto[];
 }
 
 export class FindOnePaymentDto {

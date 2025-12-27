@@ -73,4 +73,7 @@ export class UpdateSaleDto {
   @Transform(({ value }: { value: SalesStatus }) => value?.toUpperCase())
   @IsEnum(SalesStatus, { message: 'status must be either PAID/PARTIAL/UNPAID' })
   status: SalesStatus;
+  @IsOptional()
+  @IsNumber()
+  paidAmount: number;
 }

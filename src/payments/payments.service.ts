@@ -13,22 +13,49 @@ import {
   UpdatePaymentDto,
 } from 'src/common/dtos/payments.dto';
 import { ResponseDto } from 'src/common/dtos/response.dto';
+import { ShopsService } from 'src/shops/shops.service';
+import { PaymentDetailsService } from 'src/payment-details/payment-details.service';
 
 @Injectable()
 export class PaymentsService {
   constructor(
     @InjectRepository(Payments)
     private paymentsRepository: Repository<Payments>,
+    private storesService: ShopsService,
+    private paymentDetailsService: PaymentDetailsService,
   ) {}
 
   async create(body: CreatePaymentDto): Promise<ResponseDto<PaymentDto>> {
-    const payment = this.paymentsRepository.create(body);
+    const queryRunner =
+      this.paymentsRepository.manager.connection.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
     try {
-      const savedPayment = await this.paymentsRepository.save(payment);
+      await this.storesService.findOneManager(
+        queryRunner.manager,
+        body.storeId,
+      );
+
+      const paymentRepo = queryRunner.manager.getRepository(Payments);
+      const payment = paymentRepo.create(body);
+      const savedPayment = await paymentRepo.save(payment);
+
+      if (body.paymentDetails?.length) {
+        for (const detail of body.paymentDetails) {
+          await this.paymentDetailsService.createManager(queryRunner.manager, {
+            ...detail,
+            paymentId: savedPayment.id,
+          });
+        }
+      }
+
+      await queryRunner.commitTransaction();
 
       return { data: savedPayment, message: 'Payment created successfully' };
     } catch (error: unknown) {
+      await queryRunner.rollbackTransaction();
       console.error(error);
 
       if (error instanceof QueryFailedError) {
@@ -38,6 +65,8 @@ export class PaymentsService {
       }
 
       throw error;
+    } finally {
+      await queryRunner.release();
     }
   }
 

@@ -1,4 +1,4 @@
-import { IsNumber, IsUUID } from 'class-validator';
+import { IsNumber, IsOptional, IsUUID } from 'class-validator';
 import { Payments } from 'src/payments/payments.entity';
 import { Sales } from 'src/sales/sales.entity';
 
@@ -14,6 +14,7 @@ export class PaymentDetailDto {
 }
 
 export class CreatePaymentDetailDto {
+  @IsOptional()
   @IsUUID(4)
   paymentId: string;
   @IsUUID(4)

@@ -18,6 +18,6 @@ import { ProductsModule } from 'src/products/products.module';
   ],
   providers: [SalesService],
   controllers: [SalesController],
-  exports: [TypeOrmModule],
+  exports: [SalesService, TypeOrmModule],
 })
 export class SalesModule {}

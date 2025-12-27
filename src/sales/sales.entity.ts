@@ -23,10 +23,12 @@ export class Sales {
   invoiceNumber: number;
   @Column({ name: 'grand_total', type: 'int', default: 0 })
   grandTotal: number;
+  @Column({ name: 'paid_amount', type: 'int', default: 0 })
+  paidAmount: number;
   @Column({
     type: 'enum',
     enum: SalesStatus,
-    default: SalesStatus.PAID,
+    default: SalesStatus.UNPAID,
     enumName: 'status',
   })
   status: SalesStatus;
